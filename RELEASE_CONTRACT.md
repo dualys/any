@@ -1,11 +1,11 @@
 # Proposition de contrat de publication v2
 
 Statut : **proposition partiellement implémentée et non validée conjointement**.
-Seul le téléversement des blobs candidats est implémenté ; aucune release n'est
-rendue installable par ce contrat. Le format
-source v1 d'anynix ne signe pas les métadonnées d'installation : il ne doit
-pas être accepté comme release v2. Les clients et le registre doivent rejeter
-les versions qu'ils ne comprennent pas.
+Le téléversement des blobs candidats et l'installation Rust depuis un dépôt
+local sont implémentés ; le registre ne publie pas encore de release v2. Le
+format source v1 d'anynix ne signe pas les métadonnées d'installation : il ne
+doit pas être accepté comme release v2. Les clients et le registre doivent
+rejeter les versions qu'ils ne comprennent pas.
 
 ## Conventions cryptographiques
 
@@ -229,6 +229,38 @@ de release ni dans les réponses publiques du registre. Le format signé d'un
 refus privé, les droits des reviewers et managers, les transitions autorisées et
 les schémas HTTP de ce service restent à définir. Les identifiants et jetons
 internes ne doivent pas apparaître dans les objets signés publics.
+
+## Installation locale
+
+Une release installable est distincte de l'archive source produite par `pack`.
+Un dépôt local contient les métadonnées TUF, les cibles TUF décrites ci-dessus
+et les blobs référencés par les releases. La racine TUF initiale est fournie
+séparément et vérifiée par un canal indépendant : la racine incluse dans un
+dépôt ou un paquet n'est pas automatiquement approuvée.
+
+Le dépôt local utilise les répertoires `metadata/`, `targets/` et `blobs/`,
+ces derniers contenant des fichiers nommés par leur hash BLAKE3. Ce format
+de répertoire ne définit pas encore une archive hors ligne autonome.
+
+Le client sélectionne la cible correspondant à son OS et son architecture,
+résout récursivement les versions exactes des dépendances dans le dépôt local,
+puis vérifie l'ensemble des métadonnées, attestations et blobs nécessaires avant
+de modifier le préfixe. Des dépendances manquantes, contradictoires ou
+cycliques entraînent un refus. Le fonctionnement hors ligne n'effectue aucune
+requête réseau, y compris pour TUF.
+
+Les chemins d'installation des fichiers sont relatifs au préfixe partagé
+`/apps` par défaut, par exemple `bin/example` devient `/apps/bin/example`.
+Aucun fichier ou lien existant ne doit être écrasé, et les chemins ne doivent
+pas traverser de lien symbolique. Les tests utilisent uniquement des préfixes
+temporaires. Ce contrat ne définit pas encore les commandes `remove` et
+`uninstall` ni leur registre de fichiers installés.
+
+L'implémentation actuelle refuse les fichiers déjà présents, les métadonnées
+TUF déléguées et les répertoires d'installation appartenant à un autre
+utilisateur ou modifiables par d'autres. Elle limite chaque fichier à 256 Mio,
+l'ensemble des fichiers à 512 Mio, le nombre de fichiers à 1 024 et le nombre
+de paquets à 256. Une interruption brutale peut laisser une copie partielle.
 
 ## Publication proposée
 
