@@ -216,19 +216,25 @@ lieu : cette garantie dépend de l'exploitation des signataires.
 
 ## Revue privée et corrections
 
-Le service de revue est distinct du registre public. Il authentifie les
-développeurs au moyen de jetons individuels et contrôle les autorisations de
-lecture et d'écriture. Une correction est une nouvelle soumission liée
-explicitement à la soumission refusée ; le paquet et le refus précédents sont
-conservés. Une correction doit être revue à nouveau, et ne prolonge pas la
-chaîne d'attestations d'une soumission rejetée.
+Un premier service de revue privé existe dans le client Rust, sous forme d'un
+processus distinct du registre public. Il authentifie les comptes au moyen de
+jetons individuels. Tous les comptes authentifiés peuvent lire l'ensemble de
+l'historique privé ; les écritures sont limitées selon le rôle et une correction
+ne peut être soumise que par le propriétaire de la soumission refusée. Une
+correction est une nouvelle soumission liée explicitement à la soumission
+refusée ; le paquet et le refus précédents sont conservés. Une correction doit
+être revue à nouveau, et ne prolonge pas la chaîne d'attestations d'une
+soumission rejetée.
 
 Les refus, leurs motifs, les liens entre corrections et l'historique restent
 strictement internes au service de revue et ne sont pas inclus dans le document
-de release ni dans les réponses publiques du registre. Le format signé d'un
-refus privé, les droits des reviewers et managers, les transitions autorisées et
-les schémas HTTP de ce service restent à définir. Les identifiants et jetons
-internes ne doivent pas apparaître dans les objets signés publics.
+de release ni dans les réponses publiques du registre. Le service actuel
+utilise les archives source v1, non les objets de release v2.
+Leurs attestations ne lient pas leur signature à l'identifiant de soumission ;
+elles ne constituent donc pas encore le protocole de revue v2 définitif. Les
+identifiants et jetons internes ne doivent pas apparaître dans les objets
+signés publics. Le service n'effectue ni build ni publication et nécessite une
+revue de sécurité avant toute exposition en production.
 
 ## Installation locale
 
