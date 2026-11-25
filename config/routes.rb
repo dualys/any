@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     end
 
     get "blobs/:blake3", to: "blobs#show", as: :blob
+    post "blobs", to: "blobs#create"
     get "keys/:fingerprint", to: "keys#show", as: :key
   end
 
